@@ -1,0 +1,24 @@
+[package]
+name = "guangyu"
+version = "0.1.0"
+edition = "2024"
+description = "本地照片、视频管理与日记应用"
+
+[package.metadata.bundle]
+name = "光屿"
+identifier = "com.guangyu.photo"
+icon = ["assets/app-icon.icns"]
+
+[dependencies]
+gpui = { version = "0.2.2", default-features = false, features = ["font-kit"] }
+kamadak-exif = "0.6.1"
+sha2 = "0.10"
+image = { version = "0.25.10", default-features = false, features = ["bmp", "gif", "jpeg", "png", "tiff", "webp"] }
+libc = "0.2"
+core-video = { version = "0.4.3", features = ["metal"] }
+core-foundation = "0.10"
+objc2 = "0.6.2"
+objc2-av-foundation = { version = "0.3.2", default-features = false, features = ["AVPlayer", "AVPlayerItem", "AVPlayerItemOutput", "objc2-core-media", "objc2-core-video", "std"] }
+objc2-core-media = { version = "0.3.2", default-features = false, features = ["CMTime", "objc2"] }
+objc2-core-video = { version = "0.3.2", default-features = false, features = ["CVPixelBuffer", "objc2"] }
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["NSDictionary", "NSObject", "NSString", "NSURL", "NSValue"] }
