@@ -19,3 +19,7 @@ cargo run
 ```
 
 使用 `cargo bundle --release --format osx` 可生成 macOS 应用包。
+
+## GitHub Release
+
+推送 `v` 开头的标签（例如 `v0.1.0`）会自动构建 Apple Silicon 与 Intel 通用版 macOS 应用，并将 `guangyu-macos-universal.zip` 发布到 GitHub Release。也可以在 Actions 页面手动运行 `macOS Release`；不填写标签时会生成可下载的 workflow artifact，填写标签时会创建对应 Release。

@@ -1,0 +1,64 @@
+name: macOS Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Optional release tag, for example v0.1.0"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build universal macOS app
+    runs-on: macos-14
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install Rust targets
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Install cargo-bundle
+        run: cargo install --locked cargo-bundle
+
+      - name: Build universal .app
+        run: >-
+          cargo bundle --release --format osx
+          --target aarch64-apple-darwin
+          --target x86_64-apple-darwin
+
+      - name: Package app
+        run: |
+          app_path="$(find target -type d -name '光屿.app' -print -quit)"
+          if [ -z "$app_path" ]; then
+            echo "Could not find the generated 光屿.app bundle" >&2
+            exit 1
+          fi
+          ditto -c -k --sequesterRsrc --keepParent "$app_path" guangyu-macos-universal.zip
+
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') || inputs.tag != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag || github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: true
+          files: guangyu-macos-universal.zip
+          fail_on_unmatched_files: true
+
+      - name: Upload manual build artifact
+        if: github.event_name == 'workflow_dispatch' && inputs.tag == ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: guangyu-macos-universal
+          path: guangyu-macos-universal.zip
+          if-no-files-found: error
